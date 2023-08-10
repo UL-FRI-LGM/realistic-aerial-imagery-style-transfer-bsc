@@ -2,7 +2,7 @@ from PIL import Image
 from io import BytesIO
 import matplotlib.pyplot as plt
 import numpy as np
-
+import argparse
 import torch
 import torch.optim as optim
 import requests
@@ -78,9 +78,15 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 vgg.to(device)
 
-style = load_image("implementacija/imgs/ortofoto4.png").to(device)
+# Parse command-line arguments
+parser = argparse.ArgumentParser(description="Neural Style Transfer")
+parser.add_argument("--style_image", default="implementacija/imgs/ortofoto4.png", type=str, help="Path to the style image")
+parser.add_argument("--content_image", default="implementacija/imgs/gen5.png", type=str, help="Path to the content image")
+args = parser.parse_args()
 
-content  = load_image("implementacija/imgs/gen5.png").to(device)
+# Load style and content images
+style = load_image(args.style_image).to(device)
+content = load_image(args.content_image).to(device)
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 10))
 ax1.imshow(im_convert(content))
