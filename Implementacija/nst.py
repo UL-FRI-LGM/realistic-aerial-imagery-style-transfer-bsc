@@ -7,6 +7,8 @@ import torch
 import torch.optim as optim
 import requests
 from torchvision import transforms, models
+from torchvision.models.vgg import VGG19_Weights
+import os
 
 def load_image(path, img_size=500):
     """
@@ -69,7 +71,7 @@ def gram_matrix(tensor):
     
     return gram 
 
-vgg = models.vgg19(pretrained=True).features
+vgg = models.vgg19(weights=VGG19_Weights.DEFAULT).features
 
 for param in vgg.parameters():
     param.requires_grad_(False)
@@ -80,20 +82,21 @@ vgg.to(device)
 
 # Parse command-line arguments
 parser = argparse.ArgumentParser(description="Neural Style Transfer")
-parser.add_argument("--style_image", default="implementacija/imgs/ortofoto4.png", type=str, help="Path to the style image")
-parser.add_argument("--content_image", default="implementacija/imgs/gen5.png", type=str, help="Path to the content image")
+parser.add_argument("--style_image", default="Style/s1.png", type=str, help="Path to the style image")
+parser.add_argument("--content_image", default="Input/i1.png", type=str, help="Path to the content image")
+parser.add_argument("--i", default=1, type=int, help="Sequence number")
 args = parser.parse_args()
 
 # Load style and content images
 style = load_image(args.style_image).to(device)
 content = load_image(args.content_image).to(device)
 
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 10))
-ax1.imshow(im_convert(content))
-ax1.set_title("Content-Image",fontsize = 20)
-ax2.imshow(im_convert(style))
-ax2.set_title("Style-Image", fontsize = 20)
-plt.show()
+#fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 10))
+#ax1.imshow(im_convert(content))
+#ax1.set_title("Content-Image",fontsize = 20)
+#ax2.imshow(im_convert(style))
+#ax2.set_title("Style-Image", fontsize = 20)
+#plt.show()
 
 
 
@@ -108,19 +111,19 @@ style_weights = {'conv1_1': 1.5,
                  'conv2_1': 0.80,
                  'conv3_1': 0.25,
                  'conv4_1': 0.25,
-                 'conv5_1': 0.25}
+                'conv5_1': 0.25}
 #style_weights = {'conv1_1': 0.1,
 #                 'conv2_1': 0.2,
 #                 'conv3_1': 0.4,
 #                 'conv4_1': 0.8,
 #                 'conv5_1': 1.6}
 
-content_weight = 5e-2  
-style_weight = 1e7 
+content_weight = 1e-2  
+style_weight = 1e9
 
 show = 400
 
-optimizer = optim.Adam([target], lr=5e-3)
+optimizer = optim.Adam([target], lr=0.01)
 steps = 7000  
 
 for i in range(1, steps+1):
@@ -146,5 +149,22 @@ for i in range(1, steps+1):
     
     if  i % show == 0:
         print('Total loss: ', total_loss.item())
-        plt.imshow(im_convert(target))
-        plt.show()
+        #plt.imshow(im_convert(target))
+        #plt.show()
+    
+    if i == steps:
+        # Convert the tensor to a PIL image
+        final_image = im_convert(target)
+        pil_image = Image.fromarray((final_image * 255).astype(np.uint8))
+        # Define the directory where you want to save the image
+        save_directory = "Output"
+
+        # Create the directory if it doesn't exist
+        os.makedirs(save_directory, exist_ok=True)
+
+        # Save the image to the specified directory
+        image_filename = f"o{args.i}.png"
+        save_path = os.path.join(save_directory, image_filename)
+        pil_image.save(save_path)
+
+        print(f"Image saved to: {save_path}")
