@@ -7,6 +7,9 @@ This repository contains the code, data, and results of the project. The project
 ## Abstract
 Neural Style Transfer is an interesting and promising approach in the field of computer vision and image processing. The technique, based on deep neural networks, allows the content of one image to be fused with the style of another image to produce visually striking and compelling images. While the use of Neural Style Transfer has been extensively explored in various fields including artistic image creation and photo manipulation, its potential in the field of orthophoto imagery has been a relatively unexplored area.
 
+Orthophoto imagery, with its top-down view and geometric accuracy, is an invaluable asset in fields such as cartography, urban planning, agriculture and environmental monitoring, as well as in creating terrain in virtual worlds. However, the production of orthophotos in a standard way requires a lot of time and equipment, so the use of neural style transfer in this field has enormous potential.
+
+
 The thesis is accessible at:
 [https://repozitorij.uni-lj.si/Dokument.php?id=174487]
 
